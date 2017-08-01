@@ -60,7 +60,7 @@ function create_report() {
               \"reportPrettyName\": \"$report_pretty_name\",
               \"reportType\": \"$report_type\",
               \"sourceTableName\": \"$source_table_name\"}" \
-         $KILLBILL_HTTP_PROTOCOL://$KILLBILL_HOST:$KILLBILL_PORT/killbill/plugins/killbill-analytics/reports
+         $KILLBILL_HTTP_PROTOCOL://$KILLBILL_HOST:$KILLBILL_PORT/plugins/killbill-analytics/reports
 }
 
 # Install the DDL - the calendar table needs to be first

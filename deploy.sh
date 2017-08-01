@@ -1,0 +1,1 @@
+cp /Users/uengine/IdeaProjects/killbill-analytics-plugin/target/analytics-plugin-4.2.1-SNAPSHOT.jar /var/tmp/bundles/plugins/java/analytics/4.2.1/analytics-plugin-4.2.1-SNAPSHOT.jar

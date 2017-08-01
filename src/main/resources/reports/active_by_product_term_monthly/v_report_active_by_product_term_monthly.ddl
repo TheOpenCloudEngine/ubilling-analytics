@@ -9,7 +9,7 @@ from
   analytics_subscription_transitions ast
   join calendar cal on next_start_date < cal.d and (next_end_date > cal.d or next_end_date is null ) and (cal.d = last_day(cal.d) or cal.d = cast(date_format(now(), '%Y-%m-%d') as date))
 where 1=1
-  and event in ('START_ENTITLEMENT_BASE','CHANGE_BASE','SYSTEM_CHANGE_BASE')
+  and event in ('START_ENTITLEMENT_BASE','CHANGE_BASE','SYSTEM_CHANGE_BASE','START_ENTITLEMENT_UNSPECIFIED','CHANGE_UNSPECIFIED','SYSTEM_CHANGE_UNSPECIFIED')
   and next_service = 'entitlement-service'
   and cal.d < sysdate()
   and next_mrr > 0

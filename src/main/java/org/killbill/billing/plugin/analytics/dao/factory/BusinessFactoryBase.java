@@ -272,27 +272,27 @@ public abstract class BusinessFactoryBase {
 
         // Find all subscription events for that account
         final Iterable<SubscriptionEvent> subscriptionEvents = Iterables.<SubscriptionEvent>concat(Iterables.<SubscriptionBundle, List<SubscriptionEvent>>transform(bundles,
-                                                                                                                                                                    new Function<SubscriptionBundle, List<SubscriptionEvent>>() {
-                                                                                                                                                                        @Override
-                                                                                                                                                                        public List<SubscriptionEvent> apply(final SubscriptionBundle bundle) {
-                                                                                                                                                                            return bundle.getTimeline().getSubscriptionEvents();
-                                                                                                                                                                        }
-                                                                                                                                                                    }
-                                                                                                                                                                   ));
+                new Function<SubscriptionBundle, List<SubscriptionEvent>>() {
+                    @Override
+                    public List<SubscriptionEvent> apply(final SubscriptionBundle bundle) {
+                        return bundle.getTimeline().getSubscriptionEvents();
+                    }
+                }
+        ));
 
         // Filter all service state changes
         return Iterables.<SubscriptionEvent>filter(subscriptionEvents,
-                                                   new Predicate<SubscriptionEvent>() {
-                                                       @Override
-                                                       public boolean apply(final SubscriptionEvent event) {
-                                                           return event.getSubscriptionEventType() != null &&
-                                                                  // We want events coming from the blocking states table...
-                                                                  ObjectType.BLOCKING_STATES.equals(event.getSubscriptionEventType().getObjectType()) &&
-                                                                  // ...that are for any service but entitlement
-                                                                  !BusinessSubscriptionTransitionFactory.ENTITLEMENT_SERVICE_NAME.equals(event.getServiceName());
-                                                       }
-                                                   }
-                                                  );
+                new Predicate<SubscriptionEvent>() {
+                    @Override
+                    public boolean apply(final SubscriptionEvent event) {
+                        return event.getSubscriptionEventType() != null &&
+                                // We want events coming from the blocking states table...
+                                ObjectType.BLOCKING_STATES.equals(event.getSubscriptionEventType().getObjectType()) &&
+                                // ...that are for any service but entitlement
+                                !BusinessSubscriptionTransitionFactory.ENTITLEMENT_SERVICE_NAME.equals(event.getServiceName());
+                    }
+                }
+        );
     }
 
     //
@@ -366,7 +366,8 @@ public abstract class BusinessFactoryBase {
 
     protected Plan getPlanFromInvoiceItem(final InvoiceItem invoiceItem, final TenantContext context) throws AnalyticsRefreshException {
         try {
-            final Catalog catalog = getCatalog(context);
+            final Catalog catalog = getCatalog(context, invoiceItem.getAccountId());
+            //final Catalog catalog = getDynamicCatalog(invoiceItem);
             return catalog.findPlan(invoiceItem.getPlanName(), invoiceItem.getStartDate().toDateTimeAtStartOfDay());
         } catch (CatalogApiException e) {
             logService.log(LogService.LOG_INFO, "Unable to retrieve plan for invoice item " + invoiceItem.getId(), e);
@@ -376,7 +377,8 @@ public abstract class BusinessFactoryBase {
 
     protected PlanPhase getPlanPhaseFromInvoiceItem(final InvoiceItem invoiceItem, final LocalDate subscriptionStartDate, final TenantContext context) throws AnalyticsRefreshException {
         try {
-            final Catalog catalog = getCatalog(context);
+            final Catalog catalog = getCatalog(context, invoiceItem.getAccountId());
+            //final Catalog catalog = getDynamicCatalog(invoiceItem);
             // TODO - Inaccurate timing
             return catalog.findPhase(invoiceItem.getPhaseName(), invoiceItem.getStartDate().toDateTimeAtStartOfDay(), subscriptionStartDate.toDateTimeAtStartOfDay());
         } catch (CatalogApiException e) {
@@ -385,16 +387,20 @@ public abstract class BusinessFactoryBase {
         }
     }
 
+//    protected Catalog getDynamicCatalog(final InvoiceItem invoiceItem){
+//
+//    }
+
     //
     // CATALOG
     //
 
-    protected Catalog getCatalog(final TenantContext context) throws AnalyticsRefreshException {
+    protected Catalog getCatalog(final TenantContext context, UUID accountId) throws AnalyticsRefreshException {
         final CatalogUserApi catalogUserApi = getCatalogUserApi();
         try {
-            return catalogUserApi.getCatalog(null, context);
+            return catalogUserApi.getCatalog(null, context, accountId);
         } catch (CatalogApiException e) {
-           throw new AnalyticsRefreshException(e);
+            throw new AnalyticsRefreshException(e);
         }
     }
 

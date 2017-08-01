@@ -7,7 +7,7 @@ select
 from
   analytics_subscription_transitions ast
 where 1=1
-  and ast.event='STOP_ENTITLEMENT_BASE'
+  and (ast.event='STOP_ENTITLEMENT_BASE' or ast.event='STOP_BILLING_UNSPECIFIED')
   and ast.report_group='default'
   and ast.prev_phase is not null
 group by 1,2,3

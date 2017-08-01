@@ -11,7 +11,7 @@ where 1=1
   and ast.prev_phase is null
   and ast.next_phase='TRIAL'
   and ast.next_start_date IS NOT NULL
-  and ast.event='START_ENTITLEMENT_BASE'
+  and (ast.event='START_ENTITLEMENT_BASE' or ast.event='START_BILLING_UNSPECIFIED')
 group by 1,2,3
 ;
 

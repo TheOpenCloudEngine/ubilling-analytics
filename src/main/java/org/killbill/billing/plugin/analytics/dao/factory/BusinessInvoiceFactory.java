@@ -115,16 +115,16 @@ public class BusinessInvoiceFactory {
                 @Override
                 public BusinessInvoiceItemBaseModelDao call() throws Exception {
                     return createBusinessInvoiceItem(businessContextFactory,
-                                                     invoiceItem,
-                                                     allInvoiceItems,
-                                                     invoiceIdToInvoiceMappings,
-                                                     account,
-                                                     bundles,
-                                                     currencyConverter,
-                                                     creationAuditLog,
-                                                     accountRecordId,
-                                                     tenantRecordId,
-                                                     reportGroup);
+                            invoiceItem,
+                            allInvoiceItems,
+                            invoiceIdToInvoiceMappings,
+                            account,
+                            bundles,
+                            currencyConverter,
+                            creationAuditLog,
+                            accountRecordId,
+                            tenantRecordId,
+                            reportGroup);
                 }
             });
         }
@@ -153,13 +153,13 @@ public class BusinessInvoiceFactory {
             final AuditLog creationAuditLog = businessContextFactory.getInvoiceCreationAuditLog(invoice.getId());
 
             final BusinessInvoiceModelDao businessInvoice = new BusinessInvoiceModelDao(account,
-                                                                                        accountRecordId,
-                                                                                        invoice,
-                                                                                        invoiceRecordId,
-                                                                                        currencyConverter,
-                                                                                        creationAuditLog,
-                                                                                        tenantRecordId,
-                                                                                        reportGroup);
+                    accountRecordId,
+                    invoice,
+                    invoiceRecordId,
+                    currencyConverter,
+                    creationAuditLog,
+                    tenantRecordId,
+                    reportGroup);
 
             businessRecords.put(businessInvoice, businessInvoiceItems);
         }
@@ -180,24 +180,24 @@ public class BusinessInvoiceFactory {
                                                                       final ReportGroup reportGroup) throws AnalyticsRefreshException {
         final Invoice invoice = invoiceIdToInvoiceMappings.get(invoiceItem.getInvoiceId());
         final Collection<InvoiceItem> otherInvoiceItems = Collections2.filter(allInvoiceItems.values(),
-                                                                              new Predicate<InvoiceItem>() {
-                                                                                  @Override
-                                                                                  public boolean apply(final InvoiceItem input) {
-                                                                                      return input.getId() != null && !input.getId().equals(invoiceItem.getId());
-                                                                                  }
-                                                                              }
-                                                                             );
+                new Predicate<InvoiceItem>() {
+                    @Override
+                    public boolean apply(final InvoiceItem input) {
+                        return input.getId() != null && !input.getId().equals(invoiceItem.getId());
+                    }
+                }
+        );
         return createBusinessInvoiceItem(businessContextFactory,
-                                         account,
-                                         invoice,
-                                         invoiceItem,
-                                         otherInvoiceItems,
-                                         bundles,
-                                         currencyConverter,
-                                         creationAuditLog,
-                                         accountRecordId,
-                                         tenantRecordId,
-                                         reportGroup);
+                account,
+                invoice,
+                invoiceItem,
+                otherInvoiceItems,
+                bundles,
+                currencyConverter,
+                creationAuditLog,
+                accountRecordId,
+                tenantRecordId,
+                reportGroup);
     }
 
     private BusinessInvoiceItemBaseModelDao createBusinessInvoiceItem(final BusinessContextFactory businessContextFactory,
@@ -229,10 +229,11 @@ public class BusinessInvoiceFactory {
         }
 
         Plan plan = null;
-        if (Strings.emptyToNull(invoiceItem.getPlanName()) != null) {
+        if (Strings.emptyToNull(invoiceItem.getPlanName()) != null && invoiceItem.getSubscriptionId() != null) {
             plan = businessContextFactory.getPlanFromInvoiceItem(invoiceItem);
         }
-        if (plan == null && linkedInvoiceItem != null && Strings.emptyToNull(linkedInvoiceItem.getPlanName()) != null) {
+        if (plan == null && linkedInvoiceItem != null && Strings.emptyToNull(linkedInvoiceItem.getPlanName()) != null
+                && linkedInvoiceItem.getSubscriptionId() != null) {
             plan = businessContextFactory.getPlanFromInvoiceItem(linkedInvoiceItem);
         }
 
@@ -254,18 +255,18 @@ public class BusinessInvoiceFactory {
         final Long invoiceItemRecordId = invoiceItem.getId() != null ? businessContextFactory.getInvoiceItemRecordId(invoiceItem.getId()) : null;
 
         return createBusinessInvoiceItem(account,
-                                         invoice,
-                                         invoiceItem,
-                                         otherInvoiceItems,
-                                         bundle,
-                                         plan,
-                                         planPhase,
-                                         invoiceItemRecordId,
-                                         currencyConverter,
-                                         creationAuditLog,
-                                         accountRecordId,
-                                         tenantRecordId,
-                                         reportGroup);
+                invoice,
+                invoiceItem,
+                otherInvoiceItems,
+                bundle,
+                plan,
+                planPhase,
+                invoiceItemRecordId,
+                currencyConverter,
+                creationAuditLog,
+                accountRecordId,
+                tenantRecordId,
+                reportGroup);
     }
 
     private LocalDate getSubscriptionStartDate(final InvoiceItem invoiceItem, final SubscriptionBundle bundle) {
@@ -312,20 +313,20 @@ public class BusinessInvoiceFactory {
         final Long secondInvoiceItemRecordId = null;
 
         return BusinessInvoiceItemBaseModelDao.create(account,
-                                                      accountRecordId,
-                                                      invoice,
-                                                      invoiceItem,
-                                                      itemSource,
-                                                      businessInvoiceItemType,
-                                                      invoiceItemRecordId,
-                                                      secondInvoiceItemRecordId,
-                                                      bundle,
-                                                      plan,
-                                                      planPhase,
-                                                      currencyConverter,
-                                                      creationAuditLog,
-                                                      tenantRecordId,
-                                                      reportGroup);
+                accountRecordId,
+                invoice,
+                invoiceItem,
+                itemSource,
+                businessInvoiceItemType,
+                invoiceItemRecordId,
+                secondInvoiceItemRecordId,
+                bundle,
+                plan,
+                planPhase,
+                currencyConverter,
+                creationAuditLog,
+                tenantRecordId,
+                reportGroup);
     }
 
     private ItemSource getItemSource(final InvoiceItem invoiceItem, final Collection<InvoiceItem> otherInvoiceItems, final BusinessInvoiceItemType businessInvoiceItemType) {
